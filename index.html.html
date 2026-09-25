@@ -1,0 +1,528 @@
+<title>HTML Playground</title>
+<style>
+  :root{
+    --bg:#F5F6F9;
+    --surface:#FFFFFF;
+    --surface-2:#EEF0F4;
+    --border:#DBDFE7;
+    --text:#181B22;
+    --text-muted:#5B6270;
+    --accent:#4F46E5;
+    --accent-ink:#FFFFFF;
+    --success:#0E9F6E;
+    --danger:#DC5B4A;
+    --shadow: 0 1px 2px rgba(20,22,30,.04), 0 8px 24px -12px rgba(20,22,30,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1116;
+      --surface:#181B22;
+      --surface-2:#1F232C;
+      --border:#2B3039;
+      --text:#E7E9EE;
+      --text-muted:#9AA1B0;
+      --accent:#8B85F5;
+      --accent-ink:#12131A;
+      --success:#3FD79A;
+      --danger:#F08072;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1116;
+    --surface:#181B22;
+    --surface-2:#1F232C;
+    --border:#2B3039;
+    --text:#E7E9EE;
+    --text-muted:#9AA1B0;
+    --accent:#8B85F5;
+    --accent-ink:#12131A;
+    --success:#3FD79A;
+    --danger:#F08072;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding-inline:16px;
+  }
+  h1,h2,h3{font-family:'Manrope', 'Public Sans', sans-serif; text-wrap:balance; margin:0;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding-block:20px 40px; display:flex; flex-direction:column; gap:18px;}
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px 20px;
+    justify-content:space-between;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:36px; height:36px; border-radius:10px;
+    background:linear-gradient(155deg, var(--accent), #A78BFA);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent-ink); font-family:'JetBrains Mono', monospace; font-weight:700; font-size:15px;
+    flex:none;
+  }
+  .brand h1{font-size:19px; font-weight:800; letter-spacing:-.01em;}
+  .brand p{margin:1px 0 0; font-size:12.5px; color:var(--text-muted);}
+
+  /* ---------- buttons ---------- */
+  .icon-btn{
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted);
+    font:600 12.5px/1 'Public Sans', sans-serif; padding:9px 14px; border-radius:9px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px; transition:background .15s, color .15s, border-color .15s;
+  }
+  .icon-btn:hover{background:var(--border); color:var(--text);}
+  .icon-btn svg{width:14px; height:14px; flex:none;}
+  .icon-btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .icon-btn.primary:hover{filter:brightness(1.08);}
+  .icon-btn.danger{background:transparent; border-color:var(--danger); color:var(--danger);}
+  .icon-btn.danger:hover{background:var(--danger); color:#fff;}
+
+  /* ---------- exercise brief ---------- */
+  .exercise-brief{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:14px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:4px;
+  }
+  .exercise-brief[hidden]{display:none;}
+  .exercise-brief h2{font-size:15px; font-weight:800;}
+  .exercise-brief p{margin:0; font-size:13px; color:var(--text-muted); line-height:1.55;}
+
+  /* ---------- main split ---------- */
+  main{
+    display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start;
+  }
+  @media (max-width:860px){
+    main{grid-template-columns:1fr;}
+  }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:12px 16px; border-bottom:1px solid var(--border);
+  }
+  .panel-head h2{font-size:13.5px; font-weight:700; letter-spacing:.01em;}
+  .editor-actions{display:flex; gap:8px;}
+
+  /* ---------- editor ---------- */
+  .editor-shell{
+    display:flex; background:#151922; min-height:300px; max-height:460px;
+  }
+  .gutter{
+    flex:none; width:42px; padding:14px 0; text-align:right;
+    color:#4B5261; font:400 13px/1.6 'JetBrains Mono', monospace;
+    user-select:none; overflow:hidden; white-space:pre;
+    border-right:1px solid #262B36;
+  }
+  .gutter div{padding-right:10px;}
+  textarea#codeInput{
+    flex:1; resize:none; border:0; outline:0; padding:14px 16px;
+    background:transparent; color:#E7ECF5;
+    font:400 13px/1.6 'JetBrains Mono', monospace;
+    white-space:pre; overflow:auto; tab-size:2;
+  }
+  textarea#codeInput::selection{background:rgba(139,133,245,.35);}
+
+  /* ---------- output preview ---------- */
+  .browser-chrome{
+    display:flex; align-items:center; gap:8px; padding:10px 14px;
+    background:var(--surface-2); border-bottom:1px solid var(--border);
+  }
+  .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .dot.r{background:#F0685A;} .dot.y{background:#F2B441;} .dot.g{background:#38C172;}
+  .addr{
+    flex:1; margin-left:6px; font:500 11.5px/1 'JetBrains Mono', monospace; color:var(--text-muted);
+    background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:5px 10px;
+    text-align:center;
+  }
+  iframe#previewFrame, iframe#sampleFrame{width:100%; height:280px; border:0; background:#fff; display:block;}
+  .target-badge{
+    flex:none; font:700 10.5px/1 'Public Sans', sans-serif; letter-spacing:.03em; text-transform:uppercase;
+    color:var(--accent); background:var(--surface); border:1px solid var(--accent); border-radius:99px;
+    padding:4px 9px; margin-left:6px;
+  }
+
+
+  /* ---------- setup modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,17,22,.55);
+    display:flex; align-items:center; justify-content:center; padding:16px; z-index:100;
+  }
+  .modal-overlay[hidden]{display:none;}
+  .modal-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    width:100%; max-width:620px; max-height:88vh; overflow:auto; padding:22px;
+    box-shadow:var(--shadow); display:flex; flex-direction:column; gap:14px;
+  }
+  .modal-card h3{font-size:16px; font-weight:800;}
+  .modal-card > p{margin:-8px 0 0; font-size:12.5px; color:var(--text-muted); line-height:1.5;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field span{font-size:12.5px; font-weight:600; color:var(--text-muted);}
+  .field input, .field textarea{
+    font:inherit; font-size:13.5px; padding:9px 11px; border-radius:8px;
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text); resize:vertical;
+  }
+  .field textarea{font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.55;}
+  .field input:focus, .field textarea:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; padding-top:4px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important; transition-duration:.001s !important;}
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">&lt;/&gt;</div>
+      <div>
+        <h1>HTML Playground</h1>
+      </div>
+    </div>
+    <button class="icon-btn primary" id="setupBtn" type="button">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 4v12M4 10h12"/></svg>
+      Thiết lập bài (GV)
+    </button>
+  </header>
+
+  <div class="exercise-brief" id="exerciseBrief" hidden>
+    <h2 id="exerciseTitle"></h2>
+    <p id="exerciseDesc"></p>
+  </div>
+
+  <main>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>1 · Code của bạn</h2>
+        <div class="editor-actions">
+          <button class="icon-btn" id="downloadBtn" type="button">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>
+            Tải về
+          </button>
+          <button class="icon-btn" id="resetBtn" type="button">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10a6 6 0 1 1 2 4.5M4 10V5m0 5h5"/></svg>
+            Đặt lại
+          </button>
+        </div>
+      </div>
+      <div class="editor-shell">
+        <div class="gutter" id="gutter"></div>
+        <textarea id="codeInput" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+      </div>
+    </section>
+
+    <div style="display:flex; flex-direction:column; gap:18px;">
+      <section class="panel">
+        <div class="panel-head"><h2>2 · Bài mẫu (đáp án)</h2></div>
+        <div class="browser-chrome">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="addr">Kết quả cần đạt được</div>
+          <div class="target-badge">Đáp án</div>
+        </div>
+        <iframe id="sampleFrame" title="Giao diện bài mẫu" sandbox=""></iframe>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>3 · Giao diện của bạn</h2></div>
+        <div class="browser-chrome">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="addr">Kết quả bài của bạn</div>
+        </div>
+        <iframe id="previewFrame" title="Kết quả code của bạn" sandbox=""></iframe>
+      </section>
+    </div>
+  </main>
+
+</div>
+
+<div class="modal-overlay" id="setupOverlay" hidden>
+  <div class="modal-card">
+    <h3>Thiết lập bài cho học sinh</h3>
+    <p>Code nhập ở đây sẽ được CHẠY RA GIAO DIỆN ở khung "Bài mẫu" (không lộ code) &mdash; học sinh nhìn kết quả rồi tự đoán cần dùng thẻ/thuộc tính gì để làm ra y như vậy.</p>
+    <label class="field">
+      <span>Tên bài (không bắt buộc)</span>
+      <input type="text" id="setupTitle" placeholder="Ví dụ: Trang giới thiệu bản thân">
+    </label>
+    <label class="field">
+      <span>Đề bài / yêu cầu (không bắt buộc)</span>
+      <textarea id="setupDesc" rows="3" placeholder="Mô tả ngắn gọn học sinh cần làm gì..."></textarea>
+    </label>
+    <label class="field">
+      <span>Code mẫu / đáp án</span>
+      <textarea id="setupSample" rows="12" placeholder="Dán hoặc gõ đoạn HTML mẫu vào đây..."></textarea>
+    </label>
+    <div class="modal-actions">
+      <button class="icon-btn danger" id="setupClear" type="button">Xóa bài đã lưu</button>
+      <button class="icon-btn" id="changePinBtn" type="button">Đổi mã GV</button>
+      <button class="icon-btn" id="setupCancel" type="button">Hủy</button>
+      <button class="icon-btn primary" id="setupSave" type="button">Lưu bài</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var codeInput = $("codeInput"), gutter = $("gutter"), resetBtn = $("resetBtn"), downloadBtn = $("downloadBtn"),
+      sampleFrame = $("sampleFrame"), previewFrame = $("previewFrame"),
+      exerciseBrief = $("exerciseBrief"), exerciseTitle = $("exerciseTitle"), exerciseDesc = $("exerciseDesc"),
+      setupBtn = $("setupBtn"), setupOverlay = $("setupOverlay"),
+      setupTitle = $("setupTitle"), setupDesc = $("setupDesc"), setupSample = $("setupSample"),
+      setupCancel = $("setupCancel"), setupClear = $("setupClear"), setupSave = $("setupSave"),
+      changePinBtn = $("changePinBtn");
+
+  var STORAGE_EXERCISE = "html-playground:exercise";
+  var STORAGE_CODE = "html-playground:student-code";
+  var STORAGE_PIN = "html-playground:gv-pin";
+
+  var DEFAULT_EXERCISE = {
+    title: "Ví dụ minh họa",
+    desc: "Đây là bài mẫu có sẵn để xem thử. Bấm \"Thiết lập bài (GV)\" để nhập bài của riêng thầy/cô.",
+    sample: '<h1 style="color: teal;">Xin chào!</h1>\n\n<p>Đây là đoạn văn có <strong>in đậm một phần</strong> và <em>in nghiêng một phần</em>.</p>'
+  };
+
+  var STARTER_CODE =
+"<!DOCTYPE html>\n"+
+"<html>\n"+
+"<head>\n"+
+"    <meta charset=\"utf-8\">\n"+
+"    <title>Bài làm của em</title>\n"+
+"</head>\n"+
+"<body>\n"+
+"\n"+
+"</body>\n"+
+"</html>\n";
+
+  function loadExercise(){
+    try{
+      var v = localStorage.getItem(STORAGE_EXERCISE);
+      if(v) return JSON.parse(v);
+    }catch(e){}
+    return DEFAULT_EXERCISE;
+  }
+  function saveExercise(ex){
+    try{ localStorage.setItem(STORAGE_EXERCISE, JSON.stringify(ex)); }catch(e){}
+  }
+
+  var exercise = loadExercise();
+
+  function renderExercise(){
+    sampleFrame.srcdoc = exercise.sample || "";
+    var hasTitle = !!(exercise.title && exercise.title.trim());
+    var hasDesc = !!(exercise.desc && exercise.desc.trim());
+    if(hasTitle || hasDesc){
+      exerciseBrief.hidden = false;
+      exerciseTitle.textContent = exercise.title || "";
+      exerciseTitle.hidden = !hasTitle;
+      exerciseDesc.textContent = exercise.desc || "";
+      exerciseDesc.hidden = !hasDesc;
+    } else {
+      exerciseBrief.hidden = true;
+    }
+  }
+
+  function updateGutter(code){
+    var lines = code.split("\n").length;
+    var html = "";
+    for(var i=1;i<=lines;i++){ html += "<div>"+i+"</div>"; }
+    gutter.innerHTML = html;
+  }
+
+  function loadCode(){
+    try{
+      var v = localStorage.getItem(STORAGE_CODE);
+      if(v !== null) return v;
+    }catch(e){}
+    return STARTER_CODE;
+  }
+  function saveCode(code){
+    try{ localStorage.setItem(STORAGE_CODE, code); }catch(e){}
+  }
+
+  function renderPreview(){
+    previewFrame.srcdoc = codeInput.value;
+  }
+
+  codeInput.addEventListener("input", function(){
+    updateGutter(codeInput.value);
+    saveCode(codeInput.value);
+    renderPreview();
+  });
+
+  codeInput.addEventListener("scroll", function(){
+    gutter.scrollTop = codeInput.scrollTop;
+  });
+
+  codeInput.addEventListener("keydown", function(e){
+    if(e.key === "Tab"){
+      e.preventDefault();
+      var start = codeInput.selectionStart, end = codeInput.selectionEnd;
+      codeInput.value = codeInput.value.slice(0,start) + "  " + codeInput.value.slice(end);
+      codeInput.selectionStart = codeInput.selectionEnd = start + 2;
+      codeInput.dispatchEvent(new Event("input"));
+    }
+  });
+
+  resetBtn.addEventListener("click", function(){
+    codeInput.value = STARTER_CODE;
+    saveCode(STARTER_CODE);
+    updateGutter(STARTER_CODE);
+    renderPreview();
+    codeInput.focus();
+  });
+
+  downloadBtn.addEventListener("click", function(){
+    var suggested = "STT_Hovaten_Lop.html";
+    var typed = window.prompt(
+      "Đặt tên file theo đúng cú pháp STT_Họ và tên_Lớp, ví dụ: 01_NguyenVanA_12A1.html",
+      suggested
+    );
+    if(typed === null){ return; }
+    typed = typed.trim();
+    if(!typed){ typed = suggested; }
+    if(!/\.html?$/i.test(typed)){ typed += ".html"; }
+    var filename = typed;
+    var data = codeInput.value;
+
+    var useFallback = function(){
+      try{
+        var blob = new Blob([data], {type: "text/html;charset=utf-8"});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      }catch(e){
+        alert("Không thể tải file ở trình duyệt này. Hãy copy code và tự lưu thành file .html.");
+      }
+    };
+
+    var useClaudeDownloads = function(){
+      if(window.claude && window.claude.use){
+        window.claude.use("downloads").then(function(downloads){
+          if(!downloads){ useFallback(); return; }
+          downloads.save({filename: filename, data: data}).catch(function(err){
+            if(err && err.code === "declined"){ return; }
+            useFallback();
+          });
+        }).catch(useFallback);
+      } else {
+        useFallback();
+      }
+    };
+
+    /* Trình duyệt hỗ trợ hộp thoại "Lưu thành..." cho phép chọn cả thư mục lưu (Chrome/Edge khi chạy độc lập, ví dụ trên GitHub Pages) */
+    if(window.showSaveFilePicker){
+      window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{description: "Trang HTML", accept: {"text/html": [".html", ".htm"]}}]
+      }).then(function(handle){
+        return handle.createWritable().then(function(writable){
+          return writable.write(data).then(function(){ return writable.close(); });
+        });
+      }).catch(function(err){
+        if(err && err.name === "AbortError"){ return; }
+        useClaudeDownloads();
+      });
+    } else {
+      useClaudeDownloads();
+    }
+  });
+
+  var DEFAULT_PIN = "05092024";
+
+  function getPin(){
+    try{
+      var v = localStorage.getItem(STORAGE_PIN);
+      if(v){ return v; }
+    }catch(e){}
+    return DEFAULT_PIN;
+  }
+  function setPin(p){
+    try{ localStorage.setItem(STORAGE_PIN, p); }catch(e){}
+  }
+  function requestTeacherAccess(){
+    var savedPin = getPin();
+    var entered = window.prompt("Nhập mã GV để mở phần thiết lập bài:");
+    if(entered === null){ return false; }
+    if(entered === savedPin){ return true; }
+    alert("Sai mã GV.");
+    return false;
+  }
+
+  function openSetup(){
+    setupTitle.value = exercise.title || "";
+    setupDesc.value = exercise.desc || "";
+    setupSample.value = exercise.sample || "";
+    setupOverlay.hidden = false;
+    setupTitle.focus();
+  }
+  function closeSetup(){
+    setupOverlay.hidden = true;
+  }
+
+  setupBtn.addEventListener("click", function(){
+    if(requestTeacherAccess()){ openSetup(); }
+  });
+  changePinBtn.addEventListener("click", function(){
+    var savedPin = getPin();
+    if(savedPin){
+      var old = window.prompt("Nhập mã GV hiện tại:");
+      if(old === null){ return; }
+      if(old !== savedPin){ alert("Sai mã GV hiện tại."); return; }
+    }
+    var next = window.prompt("Nhập mã GV mới (ít nhất 4 ký tự):");
+    if(next === null){ return; }
+    next = next.trim();
+    if(next.length < 4){ alert("Mã cần ít nhất 4 ký tự."); return; }
+    setPin(next);
+    alert("Đã đổi mã GV cho máy này.");
+  });
+  setupCancel.addEventListener("click", closeSetup);
+  setupOverlay.addEventListener("click", function(e){
+    if(e.target === setupOverlay){ closeSetup(); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !setupOverlay.hidden){ closeSetup(); }
+  });
+
+  setupSave.addEventListener("click", function(){
+    exercise = {
+      title: setupTitle.value.trim(),
+      desc: setupDesc.value.trim(),
+      sample: setupSample.value
+    };
+    saveExercise(exercise);
+    renderExercise();
+    closeSetup();
+  });
+
+  setupClear.addEventListener("click", function(){
+    try{ localStorage.removeItem(STORAGE_EXERCISE); }catch(e){}
+    exercise = DEFAULT_EXERCISE;
+    renderExercise();
+    closeSetup();
+  });
+
+  renderExercise();
+  var initCode = loadCode();
+  codeInput.value = initCode;
+  updateGutter(initCode);
+  renderPreview();
+})();
+</script>
